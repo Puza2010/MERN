@@ -6,14 +6,20 @@ import PostList from '../../components/PostList';
 import PostCreateWidget from '../../components/PostCreateWidget/PostCreateWidget';
 
 // Import Actions
-import { addPostRequest, fetchPosts, deletePostRequest } from '../../PostActions';
+import { addPostRequest, fetchPosts, deletePostRequest, voteUp } from '../../PostActions';
 import { toggleAddPost } from '../../../App/AppActions';
 
 // Import Selectors
 import { getShowAddPost } from '../../../App/AppReducer';
 import { getPosts } from '../../PostReducer';
 
-class PostListPage extends Component {
+export class PostListPage extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      voteCount: this.props.posts.voteCount,
+    };
+  }
   componentDidMount() {
     this.props.dispatch(fetchPosts());
   }
@@ -29,11 +35,15 @@ class PostListPage extends Component {
     this.props.dispatch(addPostRequest({ name, title, content }));
   };
 
+  handleVoteUp = post => {
+    this.props.dispatch(voteUp(post));
+  }
+
   render() {
     return (
       <div>
         <PostCreateWidget addPost={this.handleAddPost} showAddPost={this.props.showAddPost} />
-        <PostList handleDeletePost={this.handleDeletePost} posts={this.props.posts} />
+        <PostList handleDeletePost={this.handleDeletePost} posts={this.props.posts, this.state.voteCount} handleVoteUp={this.handleVoteUp} voteCount={this.state.voteCount} />
       </div>
     );
   }
@@ -55,6 +65,7 @@ PostListPage.propTypes = {
     name: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     content: PropTypes.string.isRequired,
+    voteCount: PropTypes.number.isRequired,
   })).isRequired,
   showAddPost: PropTypes.bool.isRequired,
   dispatch: PropTypes.func.isRequired,

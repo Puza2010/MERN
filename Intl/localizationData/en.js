@@ -28,4 +28,5 @@ export default {
     	  other {has # comments}
     	} as of {date}`,
   },
+  editPost: 'Edit Post'
 };
